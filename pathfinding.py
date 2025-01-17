@@ -93,12 +93,19 @@ def visualize(grid, path):
     slope_map = np.gradient(height_map)
     slope_magnitude = np.sqrt(slope_map[0]**2 + slope_map[1]**2)  # Overall slope
 
+    # Create a custom colormap for terrain types
+    from matplotlib.colors import ListedColormap
+
+    # Define custom colors for terrain types
+    terrain_colors = ["yellow", "darkgoldenrod", "black"]  # Sand, Mud, Asphalt
+    cmap = ListedColormap(terrain_colors)
+
     # Create the plot
     plt.figure(figsize=(12, 10))
     plt.title("Grid Map with Terrain, Height, and Path", fontsize=14)
 
-    # Display terrain types
-    plt.imshow(terrain_map, cmap="terrain", alpha=0.8)
+    # Display terrain types using the custom colormap
+    plt.imshow(terrain_map, cmap=cmap, alpha=0.8)
 
     # Add height contours
     contours = plt.contour(height_map, levels=15, colors='black', linewidths=0.5)
@@ -110,9 +117,9 @@ def visualize(grid, path):
 
     # Customize legend for terrain types
     terrain_labels = {0: "Sand", 1: "Mud", 2: "Asphalt"}
-    legend_handles = [plt.Line2D([0], [0], marker='s', color=plt.cm.terrain(i / 2),
-                                 markersize=10, label=label, linestyle='None')
-                      for i, label in terrain_labels.items()]
+    legend_handles = [plt.Line2D([0], [0], marker='s', color=color, markersize=10,
+                                 label=label, linestyle='None')
+                      for label, color in zip(terrain_labels.values(), terrain_colors)]
     plt.legend(handles=legend_handles + [plt.Line2D([], [], color="red", linewidth=2, label="Robot's Path")],
                loc="upper right", fontsize=10)
 
@@ -123,7 +130,6 @@ def visualize(grid, path):
     # Show the plot
     plt.tight_layout()
     plt.show()
-
 
 # Main
 if __name__ == "__main__":
